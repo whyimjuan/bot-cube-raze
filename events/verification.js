@@ -85,7 +85,7 @@ client.on(Events.MessageCreate, async message => {
       await message.member.roles.add(role).catch(console.error);
     }
 
-    
+
     const confirmationEmbed = new EmbedBuilder()
       .setTitle('✅ Verificación Exitosa')
       .setDescription('Has sido verificado correctamente y ahora puedes acceder a los canales protegidos.')
@@ -93,11 +93,11 @@ client.on(Events.MessageCreate, async message => {
 
     await message.author.send({ embeds: [confirmationEmbed] });
 
-   
+
     verificationCodes.delete(message.author.id);
     setTimeout(() => message.delete().catch(() => {}), 1000);
   } else {
-    
+
     setTimeout(() => message.delete().catch(() => {}), 1000);
   }
 });
