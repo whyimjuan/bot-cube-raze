@@ -126,3 +126,21 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor web escuchando en el puerto ${PORT}`);
 });
+
+// Actividad del Bot
+
+// Estado de Actividad del Bot
+
+client.on("ready", () => {
+  console.log(`Bot iniciado como ${client.user.tag}`);
+
+  // Cambiar el estado del bot solo a "CubeRaze.aternos.me", sin un tipo de actividad
+  client.user.setPresence({
+    activities: [{ name: "CubeRaze.aternos.me" }], // Solo el nombre, sin tipo de actividad
+    status: "idle" // Puedes usar "idle", "dnd", "invisible" si lo prefieres
+  });
+
+  console.log("Estado actualizado a: CubeRaze.aternos.me");
+});
+
+client.login(process.env.TOKEN);
