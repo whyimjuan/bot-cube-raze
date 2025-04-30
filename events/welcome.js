@@ -1,4 +1,4 @@
-const { Events, EmbedBuilder } = require("discord.js");
+onst { Events, EmbedBuilder } = require("discord.js");
 
 module.exports = {
   name: Events.GuildMemberAdd,
