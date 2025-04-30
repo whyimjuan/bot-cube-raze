@@ -114,3 +114,15 @@ const rest = new REST().setToken(process.env.TOKEN);
 console.log("TOKEN:", process.env.TOKEN);
 
 client.login(process.env.TOKEN);
+
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('CubeRaze Bot activo!');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor web escuchando en el puerto ${PORT}`);
+});
