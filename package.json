@@ -1,0 +1,26 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^1.11.1",
+    "@discordjs/rest": "^2.5.0",
+    "@types/node": "^22.15.3",
+    "discord-api-types": "^0.38.1",
+    "discord.js": "^14.19.2",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.0",
+    "node-fs": "^0.1.7",
+    "path": "^0.12.7",
+    "rest": "^2.0.0",
+    "uuid": "^11.1.0"
+  }
+}
