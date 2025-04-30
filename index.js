@@ -1,4 +1,3 @@
-console.log("Iniciando bot...");
 const { REST, Routes, Client, Events, Collection, GatewayIntentBits } = require('discord.js');
 require('dotenv').config();
 const { ClientID, GuildID } = require('./config.json');
@@ -111,36 +110,18 @@ const rest = new REST().setToken(process.env.TOKEN);
     }
 })();
 
-console.log("TOKEN:", process.env.TOKEN);
-
 client.login(process.env.TOKEN);
-
-const express = require('express');
-const app = express();
-
-app.get('/', (req, res) => {
-  res.send('CubeRaze Bot activo!');
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor web escuchando en el puerto ${PORT}`);
-});
-
-// Actividad del Bot
 
 // Estado de Actividad del Bot
 
-client.on("ready", () => {
-  console.log(`Bot iniciado como ${client.user.tag}`);
+client.on('ready', () => {
+  console.log(`Bot conectado como ${client.user.tag}`);
 
-  // Cambiar el estado del bot solo a "CubeRaze.aternos.me", sin un tipo de actividad
   client.user.setPresence({
-    activities: [{ name: "CubeRaze.aternos.me" }], // Solo el nombre, sin tipo de actividad
-    status: "idle" // Puedes usar "idle", "dnd", "invisible" si lo prefieres
+    status: 'online', 
+    activities: [{
+      name: 'CubeRaze.aternos.me',
+      type: 4 
+    }]
   });
-
-  console.log("Estado actualizado a: CubeRaze.aternos.me");
 });
-
-client.login(process.env.TOKEN);
