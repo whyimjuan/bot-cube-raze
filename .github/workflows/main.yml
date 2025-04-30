@@ -1,0 +1,13 @@
+name: Keep Bot Alive
+
+on:
+  schedule:
+    - cron: '*/25 * * * *'  # Cada 25 minutos
+  workflow_dispatch:       # Permite ejecutarlo manualmente desde GitHub
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl Uptime URL
+        run: curl -s https://TU_DOMINIO_O_URL.com
