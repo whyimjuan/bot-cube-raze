@@ -38,7 +38,7 @@ module.exports = {
         `> ⭐ \`|\` Invitado por: **${invitadoPor}**\n` +
         `> ⭐ \`|\` Miembros totales: **${member.guild.memberCount}**\n\n` +
         `Nuestro servidor de **Minecraft** cuenta con una gran variedad de modalidades clásicas:\n\n` +
-        `> **\`SURVIVAL\`** \`|\` **\`BOXPVP\`** \`|\` **\`SKYBLOCK\`** \`|\` **\`¿...?\`**\n\n` +
+        `> **\`SURVIVAL\`** \`|\` **\`BOXPVP\`** \`|\`¿...?\`**\n\n` +
         `**Recuerda leer las <#1366070711684436158> del servidor, para evitar inconvenientes a futuro.**\n\n` +
         `> 🌐 \`|\` IP: **CubeRaze.aternos.me:18552**\n` +
         `> ⭐ \`|\` COMPATIBILIDAD: **1.8-1.20**\n` +
