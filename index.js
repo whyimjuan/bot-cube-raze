@@ -1,3 +1,31 @@
+// index.js
+const express = require('express');
+const app = express();
+const { Client, GatewayIntentBits } = require('discord.js');
+const bot = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
+
+// Configura el puerto que Render asignará automáticamente
+const port = process.env.PORT || 3000;
+
+// Aquí agregas el código de tu bot de Discord
+bot.once('ready', () => {
+  console.log('Bot de Discord está listo');
+});
+
+bot.login('TU_TOKEN_DE_DISCORD');
+
+// Configura el servidor web
+app.get('/', (req, res) => {
+  res.send('¡Bot de Discord está corriendo!');
+});
+
+// Este es el paso crucial para que Render sepa que tu bot escucha en un puerto
+app.listen(port, () => {
+  console.log(`Servidor escuchando en el puerto ${port}`);
+});
+
+//codigo bot
+
 const { REST, Routes, Client, Events, Collection, GatewayIntentBits } = require('discord.js');
 require('dotenv').config();
 const { ClientID, GuildID } = require('./config.json');
