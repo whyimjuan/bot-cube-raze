@@ -81,3 +81,17 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Servidor web escuchando en el puerto ${port}`);
 });
+
+// Estado del Bot
+client.on('ready', () => {
+  console.log(`Bot conectado como ${client.user.tag}`);
+
+  client.user.setPresence({
+    status: 'online', 
+    activities: [{
+      name: 'CubeRaze.aternos.me',
+      type: 4 
+    }]
+  });
+});
+
