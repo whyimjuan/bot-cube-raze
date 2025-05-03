@@ -31,9 +31,8 @@ client.on(Events.MessageCreate, async message => {
     message.member.permissions.has(PermissionsBitField.Flags.Administrator)
   ) {
     const embed = new EmbedBuilder()
-      .setTitle('Sistema de Verificación')
       .setDescription('# 🎉 ¡Bienvenido a **CubeRaze**! 🎉\n\nEstamos muy emocionados de tenerte con nosotros. 😊 Para asegurarnos de que eres un miembro legítimo, por favor completa el proceso de verificación.\n\n🔑 **Pasos para completar tu verificación:**\n\n**1.** Haz clic en el botón a continuación para recibir tu código de verificación.\n**2.** Este código será enviado directamente a tu DM.\n**3.** Una vez que tengas tu código, vuelve a este canal y envíalo para completar tu verificación.\n\n💬 **¡Nos encantaría tenerte en nuestra comunidad y disfrutarás de todo lo que CubeRaze tiene para ofrecer!**')
-      .setColor(0x00AE86);
+      .setColor(0xAE03DE);
 
     const button = new ButtonBuilder()
       .setCustomId('start_verification')
@@ -58,7 +57,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const embed = new EmbedBuilder()
       .setTitle('Código de Verificación')
       .setDescription(`Tu código de verificación es: \`${code}\`\n\n¡Envíalo en el canal #verificación para ser verificado!`)
-      .setColor(0xFFD700);
+      .setColor(0xAE03DE);
 
     try {
       await interaction.user.send({ embeds: [embed] });
@@ -88,8 +87,8 @@ client.on(Events.MessageCreate, async message => {
 
     const confirmationEmbed = new EmbedBuilder()
       .setTitle('✅ Verificación Exitosa')
-      .setDescription('Has sido verificado correctamente y ahora puedes acceder a los canales protegidos.')
-      .setColor(0x00AE86);
+      .setDescription('Has sido verificado correctamente.')
+      .setColor(0xAE03DE);
 
     await message.author.send({ embeds: [confirmationEmbed] });
 
