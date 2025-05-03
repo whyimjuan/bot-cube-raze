@@ -95,3 +95,10 @@ client.on('ready', () => {
   });
 });
 
+client.on('messageCreate', async (message) => {
+  if (message.author.bot || !message.guild) return;
+
+  if (message.content === '!setticketchannel' && message.member.permissions.has('Administrator')) {
+    // Aquí puedes poner el código del comando !setticketchannel que ya compartiste
+  }
+});
