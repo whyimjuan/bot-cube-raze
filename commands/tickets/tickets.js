@@ -168,13 +168,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
   .setFooter({ text: `Creado el ${new Date().toLocaleString()}` })
   .setColor(0xAE03DE);
 
-await ticketChannel.send({ embeds: [infoEmbed], components: [buttons] });
-
-
     const buttons = new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId('claim_ticket').setLabel('Reclamar').setStyle(ButtonStyle.Success),
       new ButtonBuilder().setCustomId('close_ticket').setLabel('Cerrar').setStyle(ButtonStyle.Danger)
     );
+
+    await ticketChannel.send({ embeds: [infoEmbed], components: [buttons] });
 
     await ticketChannel.send({ embeds: [infoEmbed] });
     await ticketChannel.send({ embeds: [advertencia], components: [buttons] });
