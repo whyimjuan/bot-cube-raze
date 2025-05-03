@@ -115,71 +115,69 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   // Crear el canal de ticket tras completar el formulario
-  if (interaction.isModalSubmit() && interaction.customId.startsWith('ticket_modal_')) {
-    const categoria = interaction.customId.split('_')[2];
-    const usuario = interaction.fields.getTextInputValue('usuario');
-    const modalidad = interaction.fields.getTextInputValue('modalidad');
-    const descripcion = interaction.fields.getTextInputValue('descripcion');
-    const ticketId = ticketCounter++;
-    const channelName = `ticket-${ticketId}`;
+if (interaction.isModalSubmit() && interaction.customId.startsWith('ticket_modal_')) {
+  const categoria = interaction.customId.split('_')[2];
+  const usuario = interaction.fields.getTextInputValue('usuario');
+  const modalidad = interaction.fields.getTextInputValue('modalidad');
+  const descripcion = interaction.fields.getTextInputValue('descripcion');
+  const ticketId = ticketCounter++;
+  const channelName = `ticket-${ticketId}`;
 
-    const ticketChannel = await interaction.guild.channels.create({
-      name: channelName,
-      type: ChannelType.GuildText,
-      parent: TICKETS_CATEGORY_ID,
-      permissionOverwrites: [
-        {
-          id: interaction.guild.id,
-          deny: [PermissionsBitField.Flags.ViewChannel],
-        },
-        {
-          id: interaction.user.id,
-          allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory],
-        },
-        {
-          id: STAFF_ROLE_ID,
-          allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ManageChannels],
-        },
-        {
-          id: client.user.id,
-          allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
-        },
-      ],
-    });
+  const ticketChannel = await interaction.guild.channels.create({
+    name: channelName,
+    type: ChannelType.GuildText,
+    parent: TICKETS_CATEGORY_ID,
+    permissionOverwrites: [
+      {
+        id: interaction.guild.id,
+        deny: [PermissionsBitField.Flags.ViewChannel],
+      },
+      {
+        id: interaction.user.id,
+        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory],
+      },
+      {
+        id: STAFF_ROLE_ID,
+        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ManageChannels],
+      },
+      {
+        id: client.user.id,
+        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+      },
+    ],
+  });
 
-    ticketMetadata.set(ticketChannel.id, {
-      autorId: interaction.user.id,
-      categoria,
-      usuario,
-      modalidad,
-      descripcion,
-      abierto: new Date(),
-    });
+  const infoEmbed = new EmbedBuilder()
+    .setTitle('📝 Detalles del Ticket')
+    .addFields(
+      { name: '👤 Usuario', value: usuario, inline: true },
+      { name: '🎮 Modalidad', value: modalidad, inline: true },
+      { name: '📝 Descripción', value: descripcion },
+      { name: '🧑‍💼 Reclamado por', value: '> (Este ticket no ha sido reclamado)' },
+      { name: '❗ Importante', value: '¡Recuerda no mencionar al Staff! Te atenderán lo antes posible.' }
+    )
+    .setFooter({ text: `Creado el ${new Date().toLocaleString()}` })
+    .setColor(0xAE03DE);
 
-    const infoEmbed = new EmbedBuilder()
-  .setTitle('📝 Detalles del Ticket')
-  .addFields(
-    { name: '👤 Usuario', value: usuario, inline: true },
-    { name: '🎮 Modalidad', value: modalidad, inline: true },
-    { name: '📝 Descripción', value: descripcion },
-    { name: '🧑‍💼 Reclamado por', value: '> (Este ticket no ha sido reclamado)' },
-    { name: '❗ Importante', value: '¡Recuerda no mencionar al Staff! Te atenderán lo antes posible.' }
-  )
-  .setFooter({ text: `Creado el ${new Date().toLocaleString()}` })
-  .setColor(0xAE03DE);
+  const buttons = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId('claim_ticket').setLabel('Reclamar').setStyle(ButtonStyle.Success),
+    new ButtonBuilder().setCustomId('close_ticket').setLabel('Cerrar').setStyle(ButtonStyle.Danger)
+  );
 
-    const buttons = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId('claim_ticket').setLabel('Reclamar').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId('close_ticket').setLabel('Cerrar').setStyle(ButtonStyle.Danger)
-    );
+  const ticketMessage = await ticketChannel.send({ embeds: [infoEmbed], components: [buttons] });
 
-    await ticketChannel.send({ embeds: [infoEmbed], components: [buttons] });
+  ticketMetadata.set(ticketChannel.id, {
+    autorId: interaction.user.id,
+    categoria,
+    usuario,
+    modalidad,
+    descripcion,
+    abierto: new Date(),
+    infoMessageId: ticketMessage.id
+  });
 
-    await ticketChannel.send({ embeds: [infoEmbed] });
-    await ticketChannel.send({ embeds: [advertencia], components: [buttons] });
-
-    await interaction.reply({ content: `✅ Tu ticket ha sido creado: ${ticketChannel}`, ephemeral: true });
-  }
+  await interaction.reply({ content: `✅ Tu ticket ha sido creado: ${ticketChannel}`, ephemeral: true });
+}
 
   // Reclamar ticket
   if (interaction.isButton() && interaction.customId === 'claim_ticket') {
