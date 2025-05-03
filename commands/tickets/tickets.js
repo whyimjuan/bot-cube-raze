@@ -1,9 +1,9 @@
 const { Client, GatewayIntentBits, PermissionsBitField, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, Events, ChannelType } = require('discord.js');
 require('dotenv').config();
 
-const TICKETS\_CATEGORY\_ID = '1368050092564807761'; // Asegúrate de cambiar esto por el ID real
-const CLOSED\_CATEGORY\_ID = '1368049954609692743'; // Asegúrate de cambiar esto por el ID real
-const STAFF\_ROLE\_ID = '1358617654071394377'; // Asegúrate de cambiar esto por el ID real
+const TICKETS_CATEGORY_ID = '1368050092564807761'; // Asegúrate de cambiar esto por el ID real
+const CLOSED_CATEGORY_ID = '1368049954609692743'; // Asegúrate de cambiar esto por el ID real
+const STAFF_ROLE_ID = '1358617654071394377'; // Asegúrate de cambiar esto por el ID real
 
 let ticketCounter = 1; // Puede ser persistente en una base de datos
 const ticketMetadata = new Map();
