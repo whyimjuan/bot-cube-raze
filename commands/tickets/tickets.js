@@ -202,8 +202,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   // Eliminar ticket
   if (interaction.isButton() && interaction.customId === 'delete_ticket') {
-    await interaction.channel.delete();
     await interaction.reply({ content: '✅ Ticket eliminado.', ephemeral: true });
+    await interaction.channel.delete();
+
   }
 
   // Reabrir ticket
