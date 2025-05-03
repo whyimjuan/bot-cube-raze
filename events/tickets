@@ -6,9 +6,9 @@ const client = new Client({
   partials: [Partials.Channel, Partials.Message],
 });
 
-const TICKETS_CATEGORY_ID = '1367568508862599199';
-const CLOSED_CATEGORY_ID = '1367568547626356838';
-const STAFF_ROLE_ID = '1367570297787514952';
+const TICKETS_CATEGORY_ID = '1368050092564807761';
+const CLOSED_CATEGORY_ID = '1368049954609692743';
+const STAFF_ROLE_ID = '1358617654071394377';
 
 let ticketCounter = 1;
 const ticketMetadata = new Map();
@@ -21,7 +21,7 @@ client.once('ready', () => {
 client.on('messageCreate', async (message) => {
   if (message.content === '!setticketchannel' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     const embed = new EmbedBuilder()
-      .setTitle('📫 Soporte de SandyCraft')
+      .setTitle('📫 Soporte de CubeRaze')
       .setDescription(`**¿NECESITAS AYUDA?**
 
 Abre un ticket para recibir ayuda del equipo del STAFF de SandyCraft.
