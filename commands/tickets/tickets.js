@@ -36,28 +36,7 @@ client.on('messageCreate', async (message) => {
   if (message.content === '!setticketchannel' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     const embed = new EmbedBuilder()
       .setTitle('📫 Soporte de CubeRaze')
-      .setDescription(`**¿NECESITAS AYUDA?**
-
-Abre un ticket para recibir ayuda del equipo del STAFF de SandyCraft.
-Selecciona la categoría que más se ajuste a lo que necesitas.
-
-🌍 **General**
-
-🚧 **Bugs**
-
-❌ **Reportar jugador**
-
-🙏🏻 **Apelacion**
-
-🎥 **Creador de contenido**
-
-🛒 **Tienda Web**
-
-⭕ **Reportar STAFF**
-
-❔ **Otros**
-
-*El mal uso de este sistema no será permitido. Si haces un uso indebido, podrías recibir una sanción.*`)
+      .setDescription(`**¿NECESITAS AYUDA?**\n\nAbre un ticket para recibir ayuda del equipo del STAFF de SandyCraft.\nSelecciona la categoría que más se ajuste a lo que necesitas.`)
       .setColor(0x38c8e8);
 
     const menu = new StringSelectMenuBuilder()
@@ -81,6 +60,9 @@ Selecciona la categoría que más se ajuste a lo que necesitas.
 
 // Manejo de interacciones de botones y selección
 client.on(Events.InteractionCreate, async (interaction) => {
+  // Verifica si la interacción ya fue respondida
+  if (interaction.replied || interaction.deferred) return;
+
   // Crear modal para completar el ticket
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_menu') {
     const modal = new ModalBuilder()
@@ -109,7 +91,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
             .setRequired(true)
         )
       );
-    await interaction.showModal(modal);
+
+    await interaction.showModal(modal); // Mostrar el modal
+    return; // Detenemos el flujo de la interacción aquí para evitar que se responda nuevamente
   }
 
   // Crear el canal de ticket tras completar el formulario
@@ -225,7 +209,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isButton() && interaction.customId === 'delete_ticket') {
     await interaction.reply({ content: '✅ Ticket eliminado.', ephemeral: true });
     await interaction.channel.delete();
-
   }
 
   // Reabrir ticket
