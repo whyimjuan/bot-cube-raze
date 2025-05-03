@@ -38,7 +38,7 @@ const embed = new EmbedBuilder()
 .setTitle('📫 Soporte de CubeRaze')
 .setDescription(\`**¿NECESITAS AYUDA?**
 
-Abre un ticket para recibir ayuda del equipo del STAFF de SandyCraft.
+Abre un ticket para recibir ayuda del equipo del STAFF de CubeRaze.
 Selecciona la categoría que más se ajuste a lo que necesitas.
 
 🌍 **General**
