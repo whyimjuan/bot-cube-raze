@@ -1,23 +1,37 @@
-const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ChannelType, PermissionsBitField, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, Events } = require('discord.js');
+const { Client, GatewayIntentBits, PermissionsBitField, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, Events, ChannelType } = require('discord.js');
 require('dotenv').config();
 
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
-  partials: [Partials.Channel, Partials.Message],
-});
-
-const TICKETS_CATEGORY_ID = '1368050092564807761';
-const CLOSED_CATEGORY_ID = '1368049954609692743';
-const STAFF_ROLE_ID = '1358617654071394377';
+const TICKETS_CATEGORY_ID = '1368050092564807761'; // Asegúrate de cambiar esto por el ID real
+const CLOSED_CATEGORY_ID = '1368049954609692743'; // Asegúrate de cambiar esto por el ID real
+const STAFF_ROLE_ID = '1358617654071394377'; // Asegúrate de cambiar esto por el ID real
 
 let ticketCounter = 1; // Puede ser persistente en una base de datos
 const ticketMetadata = new Map();
 const claimedTickets = new Map();
 
-client.once('ready', () => {
-  console.log(`Bot conectado como ${client.user.tag}`);
+// Crear el bot
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+  ],
 });
 
+// Cuando el bot esté listo
+client.once(Events.ClientReady, () => {
+  console.log(`Bot conectado como ${client.user.tag}`);
+  client.user.setPresence({
+    status: 'online',
+    activities: [{
+      name: 'CubeRaze.aternos.me',
+      type: 4,
+    }],
+  });
+});
+
+// Comando de creación de ticket
 client.on('messageCreate', async (message) => {
   if (message.content === '!setticketchannel' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     const embed = new EmbedBuilder()
@@ -44,8 +58,9 @@ client.on('messageCreate', async (message) => {
   }
 });
 
+// Manejo de interacciones de botones y selección
 client.on(Events.InteractionCreate, async (interaction) => {
-  // Formulario al seleccionar categoría
+  // Crear modal para completar el ticket
   if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_menu') {
     const modal = new ModalBuilder()
       .setCustomId(`ticket_modal_${interaction.values[0]}`)
@@ -76,7 +91,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await interaction.showModal(modal);
   }
 
-  // Crear canal de ticket
+  // Crear el canal de ticket tras completar el formulario
   if (interaction.isModalSubmit() && interaction.customId.startsWith('ticket_modal_')) {
     const categoria = interaction.customId.split('_')[2];
     const usuario = interaction.fields.getTextInputValue('usuario');
@@ -115,7 +130,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       usuario,
       modalidad,
       descripcion,
-      abierto: new Date()
+      abierto: new Date(),
     });
 
     const infoEmbed = new EmbedBuilder()
@@ -180,39 +195,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
       new ButtonBuilder().setCustomId('delete_ticket').setLabel('🗑️ Eliminar').setStyle(ButtonStyle.Danger)
     );
 
-    // Enviar log solo como mensaje sin botones por DM
-    const user = await interaction.guild.members.fetch(meta.autorId).catch(() => null);
-    if (user) {
-      await user.send({ embeds: [logEmbed] }).catch(() => {});
-    }
-
-    const staffClaim = claimedTickets.get(interaction.channel.id);
-    if (staffClaim) {
-      const staffUser = await interaction.guild.members.fetch(staffClaim).catch(() => null);
-      if (staffUser) {
-        await staffUser.send({ embeds: [logEmbed] }).catch(() => {});
-      }
-    }
-
-    // Mover a categoría de cerrados y enviar los botones SOLO en el canal
     await interaction.channel.setParent(CLOSED_CATEGORY_ID);
     await interaction.channel.send({ embeds: [logEmbed], components: [buttons] });
     await interaction.reply({ content: '✅ Ticket cerrado.', ephemeral: true });
   }
 
   // Eliminar ticket
-  if (interaction.isButton() && interaction.customId === 'delete_ticket') {
-    await interaction.reply({ content: '🗑️ Eliminando canal...', ephemeral: true });
-    setTimeout(() => {
-      interaction.channel.delete().catch(() => {});
-    }, 3000);
-  }
-
-  // Reabrir ticket
-  if (interaction.isButton() && interaction.customId === 'reopen_ticket') {
-    await interaction.channel.setParent(TICKETS_CATEGORY_ID);
-    await interaction.reply({ content: '🔓 Ticket reabierto.', ephemeral: true });
-  }
-});
-
-client.login(process.env.TOKEN);
+  if (interaction.isButton() && interaction.customId === 'delete_ticket')
