@@ -193,12 +193,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 
     claimedTickets.set(interaction.channel.id, interaction.user.id);
-//agregado
-      const currentName = interaction.channel.name;
-  if (!currentName.startsWith('✅')) {
-    await interaction.channel.setName(`✅-${currentName}`);
+ // ✅ Intentar cambiar el nombre del canal
+  try {
+    const currentName = interaction.channel.name;
+
+    // Evita múltiples marcas si ya tiene ✅
+    if (!currentName.startsWith('✅')) {
+      await interaction.channel.setName(`✅-${currentName}`);
+    }
+  } catch (error) {
+    console.error('Error al cambiar el nombre del canal:', error);
+    await interaction.reply({ content: '⚠️ Error al actualizar el nombre del ticket.', ephemeral: true });
+    return;
   }
-//agregado
     const claimEmbed = new EmbedBuilder()
       .setTitle('🎟️ Ticket Reclamado')
       .setDescription(`Este ticket ha sido reclamado por ${interaction.user}.`)
