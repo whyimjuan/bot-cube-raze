@@ -11,7 +11,7 @@ const claimedTickets = new Map();
 
 // Crear el bot
 const client = new Client({
-intents: \[
+intents: [
 GatewayIntentBits.Guilds,
 GatewayIntentBits.GuildMessages,
 GatewayIntentBits.MessageContent,
@@ -24,7 +24,7 @@ client.once(Events.ClientReady, () => {
 console.log(`Sistema de Tickets ${client.user.tag}`);
 client.user.setPresence({
 status: 'online',
-activities: \[{
+activities: [{
 name: 'CubeRaze.aternos.me',
 type: 4,
 }],
