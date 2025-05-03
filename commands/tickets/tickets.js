@@ -43,17 +43,24 @@ client.on('messageCreate', async (message) => {
         Selecciona la categoría que más se ajuste a lo que necesitas.
 
         🌍 **General**
+        
         🚧 **Bugs**
+        
         ❌ **Reportar jugador**
+        
         🙏🏻 **Apelacion**
+        
         🎥 **Creador de contenido**
+        
         🛒 **Tienda Web**
+        
         ⭕ **Reportar STAFF**
+        
         ❔ **Otros**
 
         *El mal uso de este sistema no será permitido. Si haces un uso indebido, podrías recibir una sanción.*
       `)
-      .setColor(0x38c8e8);
+      .setColor(0xAE03DE);
 
     const menu = new StringSelectMenuBuilder()
       .setCustomId('ticket_menu')
@@ -158,11 +165,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
         { name: 'Reclamado por', value: '> (Este ticket no ha sido reclamado)' }
       )
       .setFooter({ text: `Creado el ${new Date().toLocaleString()}` })
-      .setColor(0x38c8e8);
+      .setColor(0xAE03DE);
 
     const advertencia = new EmbedBuilder()
       .setDescription('❗ ¡Recuerda no mencionar al Staff! Te atenderán lo antes posible.')
-      .setColor(0xffcc00);
+      .setColor(0xAE03DE);
 
     const buttons = new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId('claim_ticket').setLabel('Reclamar').setStyle(ButtonStyle.Success),
@@ -190,7 +197,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     const claimEmbed = new EmbedBuilder()
       .setTitle('🎟️ Ticket Reclamado')
       .setDescription(`Este ticket ha sido reclamado por ${interaction.user}.`)
-      .setColor(0x00ff00);
+      .setColor(0xAE03DE);
 
     await interaction.channel.send({ embeds: [claimEmbed] });
     await interaction.reply({ content: 'Has reclamado este ticket.', ephemeral: true });
@@ -204,7 +211,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     const logEmbed = new EmbedBuilder()
       .setTitle('🛑 Ticket Cerrado')
       .setDescription(`Este ticket fue cerrado por ${interaction.user}.`)
-      .setColor(0xff4444);
+      .setColor(0xAE03DE);
 
     const buttons = new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId('reopen_ticket').setLabel('🔓 Re-Abrir').setStyle(ButtonStyle.Secondary),
