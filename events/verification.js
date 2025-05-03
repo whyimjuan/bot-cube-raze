@@ -32,7 +32,7 @@ client.on(Events.MessageCreate, async message => {
   ) {
     const embed = new EmbedBuilder()
       .setTitle('Sistema de Verificación')
-      .setDescription('Haz clic en el botón para iniciar la verificación.')
+      .setDescription('      .setDescription(`# 🎉 ¡Bienvenido a **CubeRaze**! 🎉\n\nEstamos muy emocionados de tenerte con nosotros. 😊 Para asegurarnos de que eres un miembro legítimo, por favor completa el proceso de verificación.\n\n🔑 **Pasos para completar tu verificación:**\n\n**1.** Haz clic en el botón a continuación para recibir tu código de verificación.\n**2.** Este código será enviado directamente a tu DM.\n**3.** Una vez que tengas tu código, vuelve a este canal y envíalo para completar tu verificación.\n\n💬 **¡Nos encantaría tenerte en nuestra comunidad y disfrutarás de todo lo que CubeRaze tiene para ofrecer!**')
       .setColor(0x00AE86);
 
     const button = new ButtonBuilder()
