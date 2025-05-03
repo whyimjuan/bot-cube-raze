@@ -21,7 +21,7 @@ GatewayIntentBits.GuildMembers,
 
 // Cuando el bot esté listo
 client.once(Events.ClientReady, () => {
-console.log(`Bot conectado como ${client.user.tag}`);
+console.log(`Sistema de Tickets ${client.user.tag}`);
 client.user.setPresence({
 status: 'online',
 activities: \[{
