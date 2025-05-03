@@ -21,7 +21,7 @@ const client = new Client({
 
 // Cuando el bot esté listo
 client.once(Events.ClientReady, () => {
-  console.log(`Bot conectado como ${client.user.tag}`);
+  console.log(`Sistema de Tickets Activo`);
   client.user.setPresence({
     status: 'online',
     activities: [{
