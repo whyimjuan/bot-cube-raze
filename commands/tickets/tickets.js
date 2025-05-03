@@ -36,7 +36,29 @@ client.on('messageCreate', async (message) => {
   if (message.content === '!setticketchannel' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     const embed = new EmbedBuilder()
       .setTitle('📫 Soporte de CubeRaze')
-      .setDescription(`**¿NECESITAS AYUDA?**\n\nAbre un ticket para recibir ayuda del equipo del STAFF de CubeRaze.\nSelecciona la categoría que más se ajuste a lo que necesitas.\n\n🌍 **General**\n🚧 **Bugs**\n❌ **Reportar jugador**\n🙏🏻 **Apelacion**\n🎥 **Creador de contenido**\n🛒 **Tienda Web**\n⭕ **Reportar STAFF**\n❔ **Otros**\n*El mal uso de este sistema no será permitido. Si haces un uso indebido, podrías recibir una sanción.*`)
+      .setDescription(`**¿NECESITAS AYUDA?**
+
+Abre un ticket para recibir ayuda del equipo del STAFF de SandyCraft.
+Selecciona la categoría que más se ajuste a lo que necesitas.
+
+🌍 **General**
+
+🚧 **Bugs**
+
+❌ **Reportar jugador**
+
+🙏🏻 **Apelacion**
+
+🎥 **Creador de contenido**
+
+🛒 **Tienda Web**
+
+⭕ **Reportar STAFF**
+
+❔ **Otros**
+
+
+*El mal uso de este sistema no será permitido. Si haces un uso indebido, podrías recibir una sanción.*`))
       .setColor(0x38c8e8);
 
     const menu = new StringSelectMenuBuilder()
