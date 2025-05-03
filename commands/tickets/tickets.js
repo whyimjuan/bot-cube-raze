@@ -201,4 +201,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   // Eliminar ticket
-  if (interaction.isButton() && interaction.customId === 'delete_ticket')
+  if (interaction.isButton() && interaction.customId === 'delete_ticket') {
+    await interaction.channel.delete();
+    await interaction.reply({ content: '✅ Ticket eliminado.', ephemeral: true });
+  }
+
+  // Reabrir ticket
+  if (interaction.isButton() && interaction.customId === 'reopen_ticket') {
+    await interaction.channel.setParent(TICKETS_CATEGORY_ID);
+    await interaction.channel.send({ content: '✅ Ticket reabierto.', ephemeral: true });
+  }
+});
+
+// Iniciar el bot
+client.login(process.env.TOKEN);
