@@ -10,7 +10,7 @@ const TICKETS_CATEGORY_ID = '1368050092564807761';
 const CLOSED_CATEGORY_ID = '1368049954609692743';
 const STAFF_ROLE_ID = '1358617654071394377';
 
-let ticketCounter = 1;
+let ticketCounter = 1; // Puede ser persistente en una base de datos
 const ticketMetadata = new Map();
 const claimedTickets = new Map();
 
@@ -22,29 +22,7 @@ client.on('messageCreate', async (message) => {
   if (message.content === '!setticketchannel' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     const embed = new EmbedBuilder()
       .setTitle('📫 Soporte de CubeRaze')
-      .setDescription(`**¿NECESITAS AYUDA?**
-
-Abre un ticket para recibir ayuda del equipo del STAFF de CubeRaze.
-Selecciona la categoría que más se ajuste a lo que necesitas.
-
-🌍 **General**
-
-🚧 **Bugs**
-
-❌ **Reportar jugador**
-
-🙏🏻 **Apelacion**
-
-🎥 **Creador de contenido**
-
-🛒 **Tienda Web**
-
-⭕ **Reportar STAFF**
-
-❔ **Otros**
-
-
-*El mal uso de este sistema no será permitido. Si haces un uso indebido, podrías recibir una sanción.*`)
+      .setDescription(`**¿NECESITAS AYUDA?**\n\nAbre un ticket para recibir ayuda del equipo del STAFF de CubeRaze.\nSelecciona la categoría que más se ajuste a lo que necesitas.\n\n🌍 **General**\n🚧 **Bugs**\n❌ **Reportar jugador**\n🙏🏻 **Apelacion**\n🎥 **Creador de contenido**\n🛒 **Tienda Web**\n⭕ **Reportar STAFF**\n❔ **Otros**\n*El mal uso de este sistema no será permitido. Si haces un uso indebido, podrías recibir una sanción.*`)
       .setColor(0x38c8e8);
 
     const menu = new StringSelectMenuBuilder()
@@ -187,27 +165,27 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await interaction.reply({ content: 'Has reclamado este ticket.', ephemeral: true });
   }
 
-// Cerrar ticket
-if (interaction.isButton() && interaction.customId === 'close_ticket') {
+  // Cerrar ticket
+  if (interaction.isButton() && interaction.customId === 'close_ticket') {
     const meta = ticketMetadata.get(interaction.channel.id);
     if (!meta) return interaction.reply({ content: '❌ No se encontró información del ticket.', ephemeral: true });
-  
+
     const logEmbed = new EmbedBuilder()
       .setTitle('🛑 Ticket Cerrado')
       .setDescription(`Este ticket fue cerrado por ${interaction.user}.`)
       .setColor(0xff4444);
-  
+
     const buttons = new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId('reopen_ticket').setLabel('🔓 Re-Abrir').setStyle(ButtonStyle.Secondary),
       new ButtonBuilder().setCustomId('delete_ticket').setLabel('🗑️ Eliminar').setStyle(ButtonStyle.Danger)
     );
-  
+
     // Enviar log solo como mensaje sin botones por DM
     const user = await interaction.guild.members.fetch(meta.autorId).catch(() => null);
     if (user) {
       await user.send({ embeds: [logEmbed] }).catch(() => {});
     }
-  
+
     const staffClaim = claimedTickets.get(interaction.channel.id);
     if (staffClaim) {
       const staffUser = await interaction.guild.members.fetch(staffClaim).catch(() => null);
@@ -215,14 +193,13 @@ if (interaction.isButton() && interaction.customId === 'close_ticket') {
         await staffUser.send({ embeds: [logEmbed] }).catch(() => {});
       }
     }
-  
+
     // Mover a categoría de cerrados y enviar los botones SOLO en el canal
     await interaction.channel.setParent(CLOSED_CATEGORY_ID);
     await interaction.channel.send({ embeds: [logEmbed], components: [buttons] });
     await interaction.reply({ content: '✅ Ticket cerrado.', ephemeral: true });
   }
-  
-  
+
   // Eliminar ticket
   if (interaction.isButton() && interaction.customId === 'delete_ticket') {
     await interaction.reply({ content: '🗑️ Eliminando canal...', ephemeral: true });
