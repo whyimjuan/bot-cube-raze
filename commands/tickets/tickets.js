@@ -193,7 +193,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 
     claimedTickets.set(interaction.channel.id, interaction.user.id);
-
+//agregado
+      const currentName = interaction.channel.name;
+  if (!currentName.startsWith('✅')) {
+    await interaction.channel.setName(`✅-${currentName}`);
+  }
+//agregado
     const claimEmbed = new EmbedBuilder()
       .setTitle('🎟️ Ticket Reclamado')
       .setDescription(`Este ticket ha sido reclamado por ${interaction.user}.`)
