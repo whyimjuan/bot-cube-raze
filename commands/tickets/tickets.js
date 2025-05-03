@@ -57,7 +57,6 @@ Selecciona la categoría que más se ajuste a lo que necesitas.
 
 ❔ **Otros**
 
-
 *El mal uso de este sistema no será permitido. Si haces un uso indebido, podrías recibir una sanción.*`)
       .setColor(0x38c8e8);
 
