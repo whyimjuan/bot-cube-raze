@@ -157,19 +157,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
     });
 
     const infoEmbed = new EmbedBuilder()
-      .setTitle(`📝 Detalles del Ticket`)
-      .addFields(
-        { name: 'Usuario', value: usuario },
-        { name: 'Modalidad', value: modalidad },
-        { name: 'Descripción', value: descripcion },
-        { name: 'Reclamado por', value: '> (Este ticket no ha sido reclamado)' }
-      )
-      .setFooter({ text: `Creado el ${new Date().toLocaleString()}` })
-      .setColor(0xAE03DE);
+  .setTitle('📝 Detalles del Ticket')
+  .addFields(
+    { name: '👤 Usuario', value: usuario, inline: true },
+    { name: '🎮 Modalidad', value: modalidad, inline: true },
+    { name: '📝 Descripción', value: descripcion },
+    { name: '🧑‍💼 Reclamado por', value: '> (Este ticket no ha sido reclamado)' },
+    { name: '❗ Importante', value: '¡Recuerda no mencionar al Staff! Te atenderán lo antes posible.' }
+  )
+  .setFooter({ text: `Creado el ${new Date().toLocaleString()}` })
+  .setColor(0xAE03DE);
 
-    const advertencia = new EmbedBuilder()
-      .setDescription('❗ ¡Recuerda no mencionar al Staff! Te atenderán lo antes posible.')
-      .setColor(0xAE03DE);
+await ticketChannel.send({ embeds: [infoEmbed], components: [buttons] });
+
 
     const buttons = new ActionRowBuilder().addComponents(
       new ButtonBuilder().setCustomId('claim_ticket').setLabel('Reclamar').setStyle(ButtonStyle.Success),
