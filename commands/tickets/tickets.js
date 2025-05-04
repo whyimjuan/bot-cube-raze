@@ -127,9 +127,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
       .setCustomId('ticket_status')
       .setPlaceholder('Selecciona el estado del ticket...')
       .addOptions([
-        { label: 'No atendido', emoji: '🟢', value: 'no_atendido' },
         { label: 'En revisión', emoji: '🟡', value: 'en_revision' },
-        { label: 'Atendido', emoji: '🔴', value: 'atendido' },
+        { label: 'Cerrar Ticket', emoji: '🔴', value: 'atendido' },
         { label: 'Urgente ⚠️', emoji: '⚠️', value: 'urgente' },
       ]);
 
@@ -144,8 +143,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
       descripcion,
       abierto: new Date(),
       infoMessageId: ticketMessage.id,
-      estado: 'no_atendido',  // Estado por defecto
-      urgente: false,  // No urgente por defecto
+      estado: 'no_atendido',  
+      urgente: false,  
     });
 
     await interaction.reply({ content: `✅ Tu ticket ha sido creado: ${ticketChannel}`, ephemeral: true });
@@ -159,20 +158,27 @@ client.on(Events.InteractionCreate, async (interaction) => {
     const currentName = interaction.channel.name;
     let newName = currentName;
 
-    // Cambiar el nombre del canal según el estado
-    if (status === 'no_atendido') {
-      newName = `🟢-${currentName}`;
-    } else if (status === 'en_revision') {
+    if (status === 'en_revision') {
       newName = `🟡-${currentName}`;
+      const infoEmbed = new EmbedBuilder()
+        .setTitle('🔄 Ticket En Revisión')
+        .setDescription(`El ticket está siendo revisado por el Staff.`)
+        .addFields(
+          { name: '👤 Usuario', value: meta.usuario, inline: true },
+          { name: '🎮 Modalidad', value: meta.modalidad, inline: true },
+          { name: '📝 Descripción', value: meta.descripcion },
+        )
+        .setColor(0xAE03DE);
+
+      await interaction.channel.send({ embeds: [infoEmbed] });
     } else if (status === 'atendido') {
       newName = `🔴-${currentName}`;
       await interaction.channel.setParent(CLOSED_CATEGORY_ID);
     }
 
-    // Marcar como urgente
     if (status === 'urgente') {
       newName = `⚠️-${currentName}`;
-      meta.urgente = true;  // Marcar ticket como urgente
+      meta.urgente = true;  
     }
 
     try {
@@ -184,6 +190,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
       await interaction.reply({ content: '⚠️ Error al actualizar el estado del ticket.', ephemeral: true });
     }
   }
-});
 
-client.login(process.env.TOKEN);
+  if (interaction.isButton() && interaction.customId === 'close_ticket') {
+    const meta = ticketMetadata.get(interaction.channel.id);
+    if (!meta) return interaction.reply({ content: '❌ No se encontró información del ticket.', ephemeral: true });
+
+    const logEmbed = new EmbedBuilder()
+      .setTitle('🛑 Ticket Cerrado')
+      .setDescription(`Este ticket fue cerrado por ${interaction.user}.`)
+      .setColor(0xAE03DE);
+
+    const buttons = new ActionRowBuilder().addComponents(
+      new ButtonBuilder().setCustomId('delete_ticket').setLabel('🗑️ Eliminar').setStyle(ButtonStyle.Danger),
+      new ButtonBuilder().setCustomId('reopen_ticket').setLabel('🔓 Re-Abrir').setStyle(ButtonStyle.Secondary)
+    );
+
+    await interaction.channel.setParent(CLOSED_CATEGORY_ID);
+    await interaction.channel.send({ embeds: [logEmbed], components: [buttons] });
+    await interaction.reply({ content: '✅ Ticket cerrado.', ephemeral: true });
+  }
