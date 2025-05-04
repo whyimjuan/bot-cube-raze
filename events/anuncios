@@ -8,8 +8,8 @@ module.exports = {
     if (message.author.bot) return;
 
     // ID del canal origen y destino
-    const canalOrigenId = 'ID_DEL_CANAL_ORIGEN';
-    const canalDestinoId = 'ID_DEL_CANAL_DESTINO';
+    const canalOrigenId = '1368670946780778598';
+    const canalDestinoId = '1366071252606914733';
 
     // Solo responde si el mensaje viene del canal específico
     if (message.channel.id !== canalOrigenId) return;
