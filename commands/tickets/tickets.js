@@ -1,4 +1,4 @@
-// Sistema de tickets completo con ajustes solicitados
+
 const { Client, GatewayIntentBits, PermissionsBitField, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, Events, ChannelType } = require('discord.js');
 require('dotenv').config();
 
@@ -186,18 +186,3 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.login(process.env.TOKEN);
-
-
-Ya fusioné todo el sistema de tickets en un solo archivo funcional llamado tickets_system. Incluye:
-
-Un solo manejador de interacciones (interactionCreate).
-
-Creación, cierre, reapertura y eliminación de tickets.
-
-Manejo de botones y menús sin duplicados.
-
-Uso de Map() para el control interno de estados del ticket.
-
-
-¿Quieres que te ayude a probarlo en tu bot actual o agregar más funciones como logs o asignación automática?
-
