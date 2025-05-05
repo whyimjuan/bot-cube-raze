@@ -116,3 +116,29 @@ fs.writeFileSync(encuestaFilePath, JSON.stringify(usuariosQueRespondieron, null,
 });
 
 client.login(process.env.TOKEN);
+
+const { AttachmentBuilder } = require('discord.js');
+
+client.on(Events.MessageCreate, async message => {
+  if (message.author.bot) return;
+
+  // Comando solo para ti o para admins
+  if (message.content === '!verencuestas') {
+    if (!message.member.permissions.has('Administrator')) {
+      return message.reply('No tienes permiso para usar este comando.');
+    }
+
+    try {
+      const buffer = Buffer.from(JSON.stringify(usuariosQueRespondieron, null, 2));
+      const attachment = new AttachmentBuilder(buffer, { name: 'encuestas.json' });
+
+      await message.channel.send({
+        content: 'Aquí tienes el archivo de encuestas actuales:',
+        files: [attachment]
+      });
+    } catch (err) {
+      console.error('❌ Error al enviar el archivo de encuestas:', err);
+      message.reply('Ocurrió un error al intentar enviar el archivo.');
+    }
+  }
+});
