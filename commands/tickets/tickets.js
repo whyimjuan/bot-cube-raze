@@ -6,7 +6,7 @@ let ticketCounter = 1; const ticketMetadata = new Map();
 
 const client = new Client({ intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers, ], });
 
-client.once(Events.ClientReady, () => { console.log(`Sistema de Tickets ${client.user.tag`}); client.user.setPresence({ status: 'online', activities: [{ name: 'CubeRaze.aternos.me', type: 4 }], }); });
+client.once(Events.ClientReady, () => { console.log(`Sistema de Tickets ${client.user.tag}`}); client.user.setPresence({ status: 'online', activities: [{ name: 'CubeRaze.aternos.me', type: 4 }], }); });
 
 client.on('messageCreate', async (message) => { if (message.content === '!setticketchannel' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) { const embed = new EmbedBuilder() .setTitle('📫 Soporte de CubeRaze') .setDescription(**¿NECESITAS AYUDA?**\n\nAbre un ticket para recibir ayuda del equipo del STAFF de CubeRaze.) .setColor(0xAE03DE);
 
