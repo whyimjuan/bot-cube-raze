@@ -88,9 +88,9 @@ client.on(Events.MessageCreate, async message => {
 
     await dmChannel.send({ embeds: [thanksEmbed] });
 
-    usuariosQueRespondieron[userId] = true;
+usuariosQueRespondieron[userId] = true;
 
-    fs.writeFileSync(encuestaFilePath, JSON.stringify(usuariosQueRespondieron, null, 2));
+fs.writeFileSync(encuestaFilePath, JSON.stringify(usuariosQueRespondieron, null, 2));
 
     const logChannel = await client.channels.fetch("1367152173309366344");
     if (logChannel && logChannel.isTextBased()) {
