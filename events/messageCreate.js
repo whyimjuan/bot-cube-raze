@@ -17,7 +17,7 @@ module.exports = {
     // Crear el embed
     const embed = new EmbedBuilder()
       .setDescription(message.content)
-      .setColor(0xAE03DE);
+      .setColor(#febf25);
 
     // Obtener el canal destino y enviar el embed
     const canalDestino = message.client.channels.cache.get(canalDestinoId);
