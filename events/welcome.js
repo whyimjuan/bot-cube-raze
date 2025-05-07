@@ -31,7 +31,7 @@ module.exports = {
     });
 
     const embed = new EmbedBuilder()
-      .setColor(0xAE03DE)
+      .setColor(#febf25)
       .setTitle("🎉 Bienvenido(a) a CubeRaze Network 🎉")
       .setDescription(
         `¡Hola <@${member.id}>! Te damos una cálida bienvenida al servidor de Discord. Esperamos que la pases muy bien aquí.\n\n` +
