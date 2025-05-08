@@ -57,7 +57,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const embed = new EmbedBuilder()
       .setTitle('Código de Verificación')
       .setDescription(`Tu código de verificación es: \`${code}\`\n\n¡Envíalo en el canal #verificación para ser verificado!`)
-      .setColor(0xAE03DE);
+      .setColor(0xfebf25);
 
     try {
       await interaction.user.send({ embeds: [embed] });
@@ -88,7 +88,7 @@ client.on(Events.MessageCreate, async message => {
     const confirmationEmbed = new EmbedBuilder()
       .setTitle('✅ Verificación Exitosa')
       .setDescription('Has sido verificado correctamente.')
-      .setColor(0xAE03DE);
+      .setColor(0xfebf25);
 
     await message.author.send({ embeds: [confirmationEmbed] });
 
