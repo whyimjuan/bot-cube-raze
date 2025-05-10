@@ -10,29 +10,30 @@ module.exports = {
     if (message.channel.id !== canalOrigenId) return;
 
     const lineas = message.content.split('\n');
-    const primerRenglon = lineas[0];
-    const contenido = lineas.slice(1).join('\n') || ' ';
-
     const canalMencionado = message.mentions.channels.first();
     if (!canalMencionado) {
       return message.reply('❌ Debes mencionar un canal en la primera línea del mensaje.');
     }
 
-    // Detectar si contiene @everyone o @here
-    const debeMencionarEveryone = message.content.includes('@everyone');
-    const debeMencionarHere = message.content.includes('@here');
+    // Detectar menciones @everyone o @here
+    const mencionaEveryone = message.content.includes('@everyone');
+    const mencionaHere = message.content.includes('@here');
+    const mención = mencionaEveryone ? '@everyone' : mencionaHere ? '@here' : null;
 
-    const menciones = debeMencionarEveryone
-      ? '@everyone'
-      : debeMencionarHere
-      ? '@here'
-      : null;
+    // Eliminar la mención y el canal mencionado del contenido del embed
+    const contenidoSinMencion = lineas
+      .slice(1)
+      .join('\n')
+      .replace(/@everyone/g, '')
+      .replace(/@here/g, '')
+      .trim();
 
     const embed = new EmbedBuilder()
-      .setDescription(contenido)
+      .setDescription(contenidoSinMencion || ' ')
       .setColor(0xfebf25)
       .setFooter({ text: 'CubeRaze Network ©' });
 
+    // Agregar imagen si hay
     if (message.attachments.size > 0) {
       const imagen = message.attachments.find(att => att.contentType?.startsWith('image/'));
       if (imagen) {
@@ -42,7 +43,7 @@ module.exports = {
 
     try {
       await canalMencionado.send({
-        content: menciones || undefined,
+        content: mención || undefined,
         embeds: [embed],
       });
     } catch (error) {
