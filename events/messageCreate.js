@@ -7,17 +7,32 @@ module.exports = {
     if (message.author.bot) return;
 
     const canalOrigenId = '1368670946780778598';
-    const canalDestinoId = '1366071252606914733';
-
     if (message.channel.id !== canalOrigenId) return;
 
-    // Crear el embed con todo el contenido como descripción
+    const lineas = message.content.split('\n');
+    const primerRenglon = lineas[0];
+    const contenido = lineas.slice(1).join('\n') || ' ';
+
+    const canalMencionado = message.mentions.channels.first();
+    if (!canalMencionado) {
+      return message.reply('❌ Debes mencionar un canal en la primera línea del mensaje.');
+    }
+
+    // Detectar si contiene @everyone o @here
+    const debeMencionarEveryone = message.content.includes('@everyone');
+    const debeMencionarHere = message.content.includes('@here');
+
+    const menciones = debeMencionarEveryone
+      ? '@everyone'
+      : debeMencionarHere
+      ? '@here'
+      : null;
+
     const embed = new EmbedBuilder()
-      .setDescription(message.content || ' ')
+      .setDescription(contenido)
       .setColor(0xfebf25)
       .setFooter({ text: 'CubeRaze Network ©' });
 
-    // Si hay una imagen adjunta, añadirla al embed
     if (message.attachments.size > 0) {
       const imagen = message.attachments.find(att => att.contentType?.startsWith('image/'));
       if (imagen) {
@@ -25,11 +40,14 @@ module.exports = {
       }
     }
 
-    const canalDestino = message.client.channels.cache.get(canalDestinoId);
-    if (canalDestino) {
-      canalDestino.send({ embeds: [embed] });
-    } else {
-      console.error('No se pudo encontrar el canal destino.');
+    try {
+      await canalMencionado.send({
+        content: menciones || undefined,
+        embeds: [embed],
+      });
+    } catch (error) {
+      console.error('Error al enviar el embed:', error);
+      message.reply('❌ Ocurrió un error al enviar el mensaje al canal mencionado.');
     }
   }
 };
