@@ -11,18 +11,13 @@ module.exports = {
 
     if (message.channel.id !== canalOrigenId) return;
 
-    // Separar el mensaje en líneas
-    const lineas = message.content.split('\n');
-    const titulo = lineas[0] || 'Sin título';
-    const descripcion = lineas.slice(1).join('\n') || ' ';
-
-    // Crear el embed
+    // Crear el embed con todo el contenido como descripción
     const embed = new EmbedBuilder()
-      .setTitle(titulo)
-      .setDescription(descripcion)
-      .setColor(0xfebf25);
+      .setDescription(message.content || ' ')
+      .setColor(0xfebf25)
+      .setFooter({ text: 'CubeRaze Network ©' });
 
-    // Adjuntar imagen si existe
+    // Si hay una imagen adjunta, añadirla al embed
     if (message.attachments.size > 0) {
       const imagen = message.attachments.find(att => att.contentType?.startsWith('image/'));
       if (imagen) {
