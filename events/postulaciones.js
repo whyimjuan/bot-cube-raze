@@ -27,19 +27,20 @@ client.once('ready', () => {
 const QUESTIONS = [
     'Nick de Minecraft',
     'Nombre de Discord',
-    'Cuántos años tienes',
-    '¿Tienes experiencia en ser staff?',
-    '¿En qué servidor has sido staff?',
-    'Dime 5 tipos de hacks',
-    'Dime la diferencia entre SPAM y FLOOD',
-    '¿Sabes hacer SS? Si es así, dime cómo empieza y cómo acaba',
-    '¿Por qué quieres ser parte del staff de este servidor?',
-    '¿Qué harías si ves a alguien rompiendo las reglas pero no tienes pruebas suficientes?',
-    '¿Cuántas horas puedes dedicar al servidor por semana?',
-    '¿Cómo manejarías un conflicto entre dos jugadores?',
-    '¿Qué experiencia tienes con plugins (como Paper, Spigot, etc.)?',
-    '¿A qué rol (Rango) te quieres postular?'
+    'Edad',
+    '¿Tienes experiencia como staff?',
+    '¿Dónde fuiste staff antes?',
+    'Menciona 5 tipos de hacks',
+    'Diferencia entre SPAM y FLOOD',
+    '¿Sabes hacer SS? ¿Cómo se hace?',
+    '¿Por qué quieres ser staff aquí?',
+    '¿Qué harías si no tienes pruebas?',
+    'Horas semanales que puedes dedicar',
+    '¿Cómo manejas un conflicto?',
+    '¿Qué sabes sobre plugins (Paper, etc)?',
+    '¿A qué rango te postulas?'
 ];
+
 
 client.on('messageCreate', async (message) => {
     if (message.content === '!setpostulacion') {
