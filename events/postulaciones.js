@@ -63,27 +63,64 @@ client.on('messageCreate', async (message) => {
 client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isButton()) {
         if (interaction.customId === 'apply_staff') {
-            const modal = new ModalBuilder()
-                .setCustomId('staff_application_modal')
-                .setTitle('Aplicación para Staff');
+            // Enviar un embed al DM con los botones para dividir las preguntas
+            const embed = new EmbedBuilder()
+                .setTitle('Formulario de Aplicación para Staff')
+                .setDescription('Selecciona una opción para continuar con la aplicación.')
+                .setColor('Blue');
 
-            // Dividir preguntas en filas de 5
-            for (let i = 0; i < QUESTIONS.length; i += 5) {
-                const row = new ActionRowBuilder();
-                QUESTIONS.slice(i, i + 5).forEach((question, index) => {
-                    row.addComponents(
-                        new TextInputBuilder()
-                            .setCustomId(`q${i + index}`)
-                            .setLabel(question)
-                            .setStyle(TextInputStyle.Paragraph)
-                            .setRequired(true)
-                    );
-                });
-                modal.addComponents(row);
-            }
+            // Crear los botones que el usuario podrá presionar para continuar
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('question_set_1')
+                        .setLabel('Parte 1')
+                        .setStyle('Primary'),
+                    new ButtonBuilder()
+                        .setCustomId('question_set_2')
+                        .setLabel('Parte 2')
+                        .setStyle('Primary'),
+                    new ButtonBuilder()
+                        .setCustomId('question_set_3')
+                        .setLabel('Parte 3')
+                        .setStyle('Primary')
+                );
 
-            await interaction.showModal(modal);
+            // Enviar el embed con los botones al DM del usuario
+            await interaction.user.send({ embeds: [embed], components: [row] });
+            await interaction.reply({ content: 'Te hemos enviado el formulario en tu DM.', ephemeral: true });
         }
+    }
+
+    if (interaction.isButton()) {
+        let questionsToAsk;
+        // Definir qué conjunto de preguntas mostrar dependiendo del botón presionado
+        if (interaction.customId === 'question_set_1') {
+            questionsToAsk = QUESTIONS.slice(0, 5); // Primer conjunto de 5 preguntas
+        } else if (interaction.customId === 'question_set_2') {
+            questionsToAsk = QUESTIONS.slice(5, 10); // Segundo conjunto de 5 preguntas
+        } else if (interaction.customId === 'question_set_3') {
+            questionsToAsk = QUESTIONS.slice(10); // Tercer conjunto de 3 preguntas
+        }
+
+        // Crear un modal con las preguntas del conjunto seleccionado
+        const modal = new ModalBuilder()
+            .setCustomId('staff_application_modal')
+            .setTitle('Aplicación para Staff');
+
+        questionsToAsk.forEach((question, index) => {
+            modal.addComponents(
+                new ActionRowBuilder().addComponents(
+                    new TextInputBuilder()
+                        .setCustomId(`q${index}`)
+                        .setLabel(question)
+                        .setStyle(TextInputStyle.Paragraph)
+                        .setRequired(true)
+                )
+            );
+        });
+
+        await interaction.showModal(modal);
     }
 
     if (interaction.isModalSubmit()) {
