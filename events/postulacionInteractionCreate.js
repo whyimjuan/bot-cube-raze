@@ -49,7 +49,7 @@ module.exports = {
         ],
         3: [
           { id: 'horas_semana', label: '¿Horas por semana que puedes dedicar?', style: TextInputStyle.Short },
-          { id: 'conflicto_jugadores', label: '¿Cómo manejarías un conflicto entre jugadores?', style: TextInputStyle.Paragraph },
+          { id: 'conflicto_jugadores', label: '¿Cómo manejarías un conflicto?', style: TextInputStyle.Paragraph },
           { id: 'experiencia_plugins', label: 'Experiencia con plugins (Paper, Spigot, etc.)', style: TextInputStyle.Paragraph },
           { id: 'rol_postular', label: '¿A qué rol te postulas?', style: TextInputStyle.Short }
         ]
