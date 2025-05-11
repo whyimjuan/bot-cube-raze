@@ -167,4 +167,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
-client.login('TU_TOKEN_AQUI');
+client.login('TOKEN');
