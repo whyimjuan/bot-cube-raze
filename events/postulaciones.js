@@ -41,6 +41,14 @@ const QUESTIONS = [
     '¿A qué rango te postulas?'
 ];
 
+// Función para dividir las preguntas en grupos de 5
+function splitQuestionsIntoRows(questions) {
+    const rows = [];
+    for (let i = 0; i < questions.length; i += 5) {
+        rows.push(questions.slice(i, i + 5));
+    }
+    return rows;
+}
 
 client.on('messageCreate', async (message) => {
     if (message.content === '!setpostulacion') {
@@ -68,9 +76,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 .setCustomId('staff_application_modal')
                 .setTitle('Aplicación para Staff');
 
-            QUESTIONS.forEach((question, index) => {
-                modal.addComponents(
-                    new ActionRowBuilder().addComponents(
+            // Dividir las preguntas en grupos de 5
+            const rows = splitQuestionsIntoRows(QUESTIONS);
+
+            rows.forEach((rowQuestions) => {
+                const row = new ActionRowBuilder().addComponents(
+                    ...rowQuestions.map((question, index) =>
                         new TextInputBuilder()
                             .setCustomId(`q${index}`)
                             .setLabel(question)
@@ -78,6 +89,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                             .setRequired(true)
                     )
                 );
+                modal.addComponents(row);
             });
 
             await interaction.showModal(modal);
