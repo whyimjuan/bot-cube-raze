@@ -38,7 +38,7 @@ module.exports = {
           { id: 'discord_name', label: 'Nombre de Discord', style: TextInputStyle.Short },
           { id: 'edad', label: '¿Cuántos años tienes?', style: TextInputStyle.Short },
           { id: 'experiencia_staff', label: '¿Tienes experiencia en ser staff?', style: TextInputStyle.Paragraph },
-          { id: 'detalle_experiencia', label: 'En qué servidor has sido staff; si no, pon "no". Si sí, dinos cuál y por qué paraste.', style: TextInputStyle.Paragraph }
+          { id: 'detalle_experiencia', label: '¿Dónde fuiste staff? ¿Por qué paraste?', style: TextInputStyle.Paragraph }
         ],
         2: [
           { id: 'tipo_hacks', label: 'Dime 5 tipos de hacks', style: TextInputStyle.Paragraph },
