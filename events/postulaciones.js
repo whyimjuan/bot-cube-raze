@@ -1,210 +1,140 @@
-const {
-    Client,
-    GatewayIntentBits,
-    EmbedBuilder,
-    ButtonBuilder,
-    ActionRowBuilder,
-    ModalBuilder,
-    TextInputBuilder,
-    TextInputStyle,
-    Events,
-    Partials,
-    ChannelType
-} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, EmbedBuilder, Events } = require('discord.js');
 
-const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
-    partials: [Partials.Channel]
-});
+// In-memory store for applications
+const applications = new Map();
 
-const STAFF_APP_CHANNEL_ID = '1367152173309366344';
-const STAFF_DECISION_CHANNEL_ID = '1368344498710777946';
+module.exports = {
+  name: 'postulation',
+  once: false,
+  execute(client) {
+    // Ready event
+    client.once(Events.ClientReady, () => {
+      console.log(`Bot conectado como ${client.user.tag}`);
+    });
 
-client.once('ready', () => {
-    console.log(`Bot listo como ${client.user.tag}`);
-});
-
-const QUESTIONS = [
-    'Nick de Minecraft',
-    'Nombre de Discord',
-    'Edad',
-    '¿Tienes experiencia como staff?',
-    '¿Dónde fuiste staff antes?',
-    'Menciona 5 tipos de hacks',
-    'Diferencia entre SPAM y FLOOD',
-    '¿Sabes hacer SS? ¿Cómo se hace?',
-    '¿Por qué quieres ser staff aquí?',
-    '¿Qué harías si no tienes pruebas?',
-    'Horas semanales que puedes dedicar',
-    '¿Cómo manejas un conflicto?',
-    '¿Qué sabes sobre plugins (Paper, etc)?',
-    '¿A qué rango te postulas?'
-];
-
-client.on('messageCreate', async (message) => {
-    if (message.content === '!setpostulacion') {
-        const embed = new EmbedBuilder()
-            .setTitle('¡Aplicación para Staff!')
-            .setDescription('Haz clic en el botón para postularte al staff del servidor.')
-            .setColor('Blue')
-            .setFooter({ text: 'CubeRaze Network ©' });
-
-        const row = new ActionRowBuilder().addComponents(
+    // MessageCreate for command
+    client.on(Events.MessageCreate, async (message) => {
+      if (message.author.bot) return;
+      if (message.content === '!setpostulacion') {
+        const applyButton = new ActionRowBuilder()
+          .addComponents(
             new ButtonBuilder()
-                .setCustomId('apply_staff')
-                .setLabel('Postularme')
-                .setStyle('Primary')
-        );
+              .setCustomId('apply_button')
+              .setLabel('Postularme')
+              .setStyle(ButtonStyle.Primary)
+          );
+        await message.channel.send({ content: '¡Postúlate para ser parte del staff!', components: [applyButton] });
+      }
+    });
 
-        await message.channel.send({ embeds: [embed], components: [row] });
-    }
-});
+    // InteractionCreate for buttons, modals, modal submissions
+    client.on(Events.InteractionCreate, async (interaction) => {
+      // Handle main apply button
+      if (interaction.isButton() && interaction.customId === 'apply_button') {
+        await interaction.reply({ content: 'Revisa tu DM para comenzar el formulario.', ephemeral: true });
+        const dmChannel = await interaction.user.createDM();
+        const formButtons = new ActionRowBuilder()
+          .addComponents(
+            new ButtonBuilder().setCustomId('form_part_1').setLabel('Parte 1').setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setCustomId('form_part_2').setLabel('Parte 2').setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setCustomId('form_part_3').setLabel('Parte 3').setStyle(ButtonStyle.Secondary)
+          );
+        await dmChannel.send({ content: 'Haz clic en un botón para comenzar el formulario.', components: [formButtons] });
+        // Initialize storage
+        applications.set(interaction.user.id, { responses: {}, partsDone: new Set() });
+      }
 
-client.on(Events.InteractionCreate, async (interaction) => {
-    if (interaction.isButton()) {
-        if (interaction.customId === 'apply_staff') {
-            // Enviar un mensaje al DM del usuario con los botones para dividir el formulario en tres partes
-            const embed = new EmbedBuilder()
-                .setTitle('Formulario de Postulación')
-                .setDescription('Haz clic en un botón para empezar la postulación (cada uno representa una parte del formulario).')
-                .setColor('Blue')
-                .setFooter({ text: 'CubeRaze Network ©' });
+      // Handle form part buttons
+      if (interaction.isButton() && interaction.customId.startsWith('form_part_')) {
+        const part = interaction.customId.split('_').pop();
+        const modal = new ModalBuilder()
+          .setCustomId(`modal_part_${part}`)
+          .setTitle(`Formulario Parte ${part}`);
 
-            const row = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                    .setCustomId('part1')
-                    .setLabel('Parte 1')
-                    .setStyle('Primary'),
-                new ButtonBuilder()
-                    .setCustomId('part2')
-                    .setLabel('Parte 2')
-                    .setStyle('Primary'),
-                new ButtonBuilder()
-                    .setCustomId('part3')
-                    .setLabel('Parte 3')
-                    .setStyle('Primary')
-            );
-
-            await interaction.user.send({ embeds: [embed], components: [row] });
-            await interaction.reply({ content: 'Te hemos enviado el formulario al DM.', ephemeral: true });
+        // Define inputs per part
+        const inputs = [];
+        if (part === '1') {
+          inputs.push(new TextInputBuilder().setCustomId('nick_mc').setLabel('Nick de Minecraft').setStyle(TextInputStyle.Short));
+          inputs.push(new TextInputBuilder().setCustomId('discord_name').setLabel('Nombre de Discord').setStyle(TextInputStyle.Short));
+          inputs.push(new TextInputBuilder().setCustomId('edad').setLabel('¿Cuántos años tienes?').setStyle(TextInputStyle.Short));
+          inputs.push(new TextInputBuilder().setCustomId('experiencia_staff').setLabel('¿Tienes experiencia en ser staff?').setStyle(TextInputStyle.Paragraph));
+          inputs.push(new TextInputBuilder().setCustomId('detalle_experiencia').setLabel('En qué servidor has sido staff; si no fuiste en ninguno pon "no". Si respondes "sí", dime en qué server y por qué paraste de ser staff.').setStyle(TextInputStyle.Paragraph));
+        } else if (part === '2') {
+          inputs.push(new TextInputBuilder().setCustomId('tipo_hacks').setLabel('Dime 5 tipos de hacks').setStyle(TextInputStyle.Paragraph));
+          inputs.push(new TextInputBuilder().setCustomId('spam_vs_flood').setLabel('Dime la diferencia entre SPAM y FLOOD').setStyle(TextInputStyle.Paragraph));
+          inputs.push(new TextInputBuilder().setCustomId('hacer_ss').setLabel('¿Sabes hacer SS? Si es así, dime cómo empieza y cómo acaba.').setStyle(TextInputStyle.Paragraph));
+          inputs.push(new TextInputBuilder().setCustomId('motivo_staff').setLabel('¿Por qué quieres ser parte del staff de este servidor?').setStyle(TextInputStyle.Paragraph));
+          inputs.push(new TextInputBuilder().setCustomId('acciones_reglas').setLabel('¿Qué harías si ves a alguien rompiendo las reglas pero no tienes pruebas suficientes?').setStyle(TextInputStyle.Paragraph));
+        } else if (part === '3') {
+          inputs.push(new TextInputBuilder().setCustomId('horas_semana').setLabel('¿Cuántas horas puedes dedicar al servidor por semana?').setStyle(TextInputStyle.Short));
+          inputs.push(new TextInputBuilder().setCustomId('conflicto_jugadores').setLabel('¿Cómo manejarías un conflicto entre dos jugadores?').setStyle(TextInputStyle.Paragraph));
+          inputs.push(new TextInputBuilder().setCustomId('experiencia_plugins').setLabel('¿Qué experiencia tienes con plugins (como Paper, Spigot, etc.)?').setStyle(TextInputStyle.Paragraph));
+          inputs.push(new TextInputBuilder().setCustomId('rol_postular').setLabel('¿A qué rol (Rango) te quieres postular?').setStyle(TextInputStyle.Short));
         }
 
-        // Manejar clics en los botones que envían las partes del formulario
-        if (interaction.customId === 'part1' || interaction.customId === 'part2' || interaction.customId === 'part3') {
-            const part = interaction.customId === 'part1' ? QUESTIONS.slice(0, 5) :
-                        interaction.customId === 'part2' ? QUESTIONS.slice(5, 10) :
-                        QUESTIONS.slice(10);
+        inputs.forEach(input => modal.addComponents(new ActionRowBuilder().addComponents(input)));
+        await interaction.showModal(modal);
+      }
 
-            const modal = new ModalBuilder()
-                .setCustomId(`${interaction.customId}_modal`)
-                .setTitle(`Formulario de Postulación - ${interaction.customId === 'part1' ? 'Parte 1' : interaction.customId === 'part2' ? 'Parte 2' : 'Parte 3'}`);
+      // Handle modal submissions
+      if (interaction.isModalSubmit() && interaction.customId.startsWith('modal_part_')) {
+        const part = interaction.customId.split('_').pop();
+        const app = applications.get(interaction.user.id);
+        const responses = {};
+        interaction.fields.fields.forEach((field, key) => { responses[key] = field.value; });
+        Object.assign(app.responses, responses);
+        app.partsDone.add(part);
+        await interaction.reply({ content: `Parte ${part} completada.`, ephemeral: true });
 
-const modal = new ModalBuilder()
-    .setCustomId(`${interaction.customId}_modal`)
-    .setTitle(`Formulario de Postulación - ${interaction.customId === 'part1' ? 'Parte 1' : interaction.customId === 'part2' ? 'Parte 2' : 'Parte 3'}`);
-
-const components = part.map((question, index) =>
-    new ActionRowBuilder().addComponents(
-        new TextInputBuilder()
-            .setCustomId(`q${index}`)
-            .setLabel(question)
-            .setStyle(TextInputStyle.Paragraph)
-            .setRequired(true)
-    )
-);
-
-modal.addComponents(...components);
-await interaction.showModal(modal);
-
+        if (app.partsDone.size === 3) {
+          const embed = new EmbedBuilder().setTitle(`Nuevo formulario de ${interaction.user.tag}`).setColor(0x00AE86).setTimestamp();
+          Object.entries(app.responses).forEach(([key, value]) => {
+            embed.addFields({ name: key, value });
+          });
+          const decisionRow = new ActionRowBuilder().addComponents(
+            new ButtonBuilder().setCustomId('decision_accept').setLabel('Aceptar').setStyle(ButtonStyle.Success),
+            new ButtonBuilder().setCustomId('decision_reject').setLabel('Rechazar').setStyle(ButtonStyle.Danger)
+          );
+          const reviewChannel = await client.channels.fetch('1367152173309366344');
+          await reviewChannel.send({ embeds: [embed], components: [decisionRow] });
+          applications.delete(interaction.user.id);
         }
-    }
+      }
 
-    if (interaction.isModalSubmit()) {
-        if (interaction.customId.startsWith('part1') || interaction.customId.startsWith('part2') || interaction.customId.startsWith('part3')) {
-            const part = interaction.customId === 'part1_modal' ? QUESTIONS.slice(0, 5) :
-                        interaction.customId === 'part2_modal' ? QUESTIONS.slice(5, 10) :
-                        QUESTIONS.slice(10);
+      // Handle admin decision buttons
+      if (interaction.isButton() && ['decision_accept','decision_reject'].includes(interaction.customId)) {
+        const decision = interaction.customId === 'decision_accept' ? 'accept' : 'reject';
+        const modal = new ModalBuilder().setCustomId(`modal_decision_reason_${decision}`).setTitle(decision === 'accept' ? 'Razón de Aprobación' : 'Razón de Rechazo');
+        modal.addComponents(new ActionRowBuilder().addComponents(
+          new TextInputBuilder().setCustomId('reason').setLabel('Escribe la razón:').setStyle(TextInputStyle.Short)
+        ));
+        await interaction.showModal(modal);
+      }
 
-            const answers = [];
-            part.forEach((_, index) => {
-                answers.push(interaction.fields.getTextInputValue(`q${index}`));
-            });
-
-            const embed = new EmbedBuilder()
-                .setTitle('Nueva Aplicación para Staff')
-                .setThumbnail(interaction.user.displayAvatarURL())
-                .setColor('Blue')
-                .setFooter({ text: 'CubeRaze Network ©' });
-
-            part.forEach((q, i) => {
-                embed.addFields({ name: q, value: answers[i], inline: false });
-            });
-
-            const row = new ActionRowBuilder().addComponents(
-                new ButtonBuilder().setCustomId('accept_app').setLabel('Aceptar').setStyle('Success'),
-                new ButtonBuilder().setCustomId('reject_app').setLabel('Rechazar').setStyle('Danger')
-            );
-
-            const channel = await client.channels.fetch(STAFF_APP_CHANNEL_ID);
-            if (channel?.type === ChannelType.GuildText) {
-                await channel.send({ content: `<@${interaction.user.id}>`, embeds: [embed], components: [row] });
-            }
-
-            await interaction.reply({ content: 'Tu solicitud fue enviada con éxito.', ephemeral: true });
-        }
-    }
-
-    if (interaction.isButton()) {
-        if (interaction.customId === 'accept_app' || interaction.customId === 'reject_app') {
-            const modal = new ModalBuilder()
-                .setCustomId(`reason_modal_${interaction.customId}`)
-                .setTitle(interaction.customId === 'accept_app' ? 'Razón de aceptación' : 'Razón de rechazo')
-                .addComponents(
-                    new ActionRowBuilder().addComponents(
-                        new TextInputBuilder()
-                            .setCustomId('reason')
-                            .setLabel('Razón')
-                            .setStyle(TextInputStyle.Paragraph)
-                            .setRequired(true)
-                    )
-                );
-
-            await interaction.showModal(modal);
-        }
-    }
-
-    if (interaction.isModalSubmit()) {
-        const isAccept = interaction.customId === 'reason_modal_accept_app';
+      // Handle decision reason submission
+      if (interaction.isModalSubmit() && interaction.customId.startsWith('modal_decision_reason_')) {
+        const decision = interaction.customId.split('_').pop();
         const reason = interaction.fields.getTextInputValue('reason');
-        const originalMessage = await interaction.channel.messages.fetch(interaction.message.id);
-        const userMention = originalMessage.content.match(/<@(\d+)>/);
-        const userId = userMention ? userMention[1] : null;
-        const user = await client.users.fetch(userId).catch(() => null);
+        const original = interaction.message;
+        const applicantTag = original.embeds[0].title.replace('Nuevo formulario de ', '');
+        const finalEmbed = new EmbedBuilder()
+          .setTitle(`Solicitud de ${applicantTag}`)
+          .setColor(decision === 'accept' ? 0x2ECC71 : 0xE74C3C)
+          .addFields(
+            { name: 'Estado', value: decision === 'accept' ? '🟢 Solicitud aprobada' : '🔴 Solicitud no aprobada' },
+            { name: 'Razón', value: reason }
+          )
+          .setFooter({ text: 'CubeRaze Network ©' })
+          .setTimestamp();
 
-        const embed = new EmbedBuilder()
-            .setTitle(`¡El jugador ${user ? user.tag : 'desconocido'} ${isAccept ? 'ha sido ascendido a Helper' : 'no ha sido ascendido a Helper'}!`)
-            .setColor(isAccept ? 'Green' : 'Red')
-            .addFields(
-                { name: 'Estado', value: isAccept ? '✅ Solicitud aprobada' : '🔴 Solicitud no aprobada' },
-                { name: 'Razón', value: reason }
-            )
-            .setFooter({ text: 'CubeRaze Network ©' });
+        const [username] = applicantTag.split('#');
+        const user = client.users.cache.find(u => u.tag === applicantTag);
+        if (user) await user.send({ embeds: [finalEmbed] });
 
-        const decisionChannel = await client.channels.fetch(STAFF_DECISION_CHANNEL_ID);
-        if (decisionChannel?.type === ChannelType.GuildText) {
-            await decisionChannel.send({ embeds: [embed] });
-        }
-
-        if (user) {
-            try {
-                await user.send(`Tu solicitud para ser staff ha sido ${isAccept ? 'aceptada' : 'rechazada'}.\nRazón: ${reason}`);
-            } catch {
-                console.log('No se pudo enviar mensaje directo al usuario.');
-            }
-        }
-
-        await interaction.reply({ content: 'Decisión registrada.', ephemeral: true });
-    }
-});
-
-client.login(process.env.TOKEN);
+        const resultChannel = await client.channels.fetch('1368344498710777946');
+        await resultChannel.send({ content: `¡El jugador @${username} no ha sido ascendido!`, embeds: [finalEmbed] });
+        await interaction.reply({ content: 'Decisión enviada correctamente.', ephemeral: true });
+      }
+    });
+  }
+};
