@@ -43,9 +43,9 @@ module.exports = {
         2: [
           { id: 'tipo_hacks', label: 'Dime 5 tipos de hacks', style: TextInputStyle.Paragraph },
           { id: 'spam_vs_flood', label: 'Diferencia entre SPAM y FLOOD', style: TextInputStyle.Paragraph },
-          { id: 'hacer_ss', label: '¿Sabes hacer SS? Cómo empieza y cómo acaba.', style: TextInputStyle.Paragraph },
+          { id: 'hacer_ss', label: '¿Sabes hacer SS? Explica como funciona.', style: TextInputStyle.Paragraph },
           { id: 'motivo_staff', label: '¿Por qué quieres ser parte del staff?', style: TextInputStyle.Paragraph },
-          { id: 'acciones_reglas', label: 'Si ves alguien rompiendo reglas sin pruebas, ¿qué harías?', style: TextInputStyle.Paragraph }
+          { id: 'acciones_reglas', label: 'Si alguien rompe las reglas, ¿qué harías?', style: TextInputStyle.Paragraph }
         ],
         3: [
           { id: 'horas_semana', label: '¿Horas por semana que puedes dedicar?', style: TextInputStyle.Short },
