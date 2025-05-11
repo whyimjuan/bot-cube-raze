@@ -63,41 +63,68 @@ client.on('messageCreate', async (message) => {
 client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isButton()) {
         if (interaction.customId === 'apply_staff') {
+            // Enviar un mensaje al DM del usuario con los botones para dividir el formulario en tres partes
+            const embed = new EmbedBuilder()
+                .setTitle('Formulario de Postulación')
+                .setDescription('Haz clic en un botón para empezar la postulación (cada uno representa una parte del formulario).')
+                .setColor('Blue')
+                .setFooter({ text: 'CubeRaze Network ©' });
+
+            const row = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('part1')
+                    .setLabel('Parte 1')
+                    .setStyle('Primary'),
+                new ButtonBuilder()
+                    .setCustomId('part2')
+                    .setLabel('Parte 2')
+                    .setStyle('Primary'),
+                new ButtonBuilder()
+                    .setCustomId('part3')
+                    .setLabel('Parte 3')
+                    .setStyle('Primary')
+            );
+
+            await interaction.user.send({ embeds: [embed], components: [row] });
+            await interaction.reply({ content: 'Te hemos enviado el formulario al DM.', ephemeral: true });
+        }
+
+        // Manejar clics en los botones que envían las partes del formulario
+        if (interaction.customId === 'part1' || interaction.customId === 'part2' || interaction.customId === 'part3') {
+            const part = interaction.customId === 'part1' ? QUESTIONS.slice(0, 5) :
+                        interaction.customId === 'part2' ? QUESTIONS.slice(5, 10) :
+                        QUESTIONS.slice(10);
+
             const modal = new ModalBuilder()
-                .setCustomId('staff_application_modal')
-                .setTitle('Aplicación para Staff');
+                .setCustomId(`${interaction.customId}_modal`)
+                .setTitle(`Formulario de Postulación - ${interaction.customId === 'part1' ? 'Parte 1' : interaction.customId === 'part2' ? 'Parte 2' : 'Parte 3'}`);
 
-            // Dividir preguntas en filas de 5
-            for (let i = 0; i < QUESTIONS.length; i += 5) {
-                const row = new ActionRowBuilder();
-                QUESTIONS.slice(i, i + 5).forEach((question, index) => {
-                    row.addComponents(
-                        new TextInputBuilder()
-                            .setCustomId(`q${i + index}`)
-                            .setLabel(question)
-                            .setStyle(TextInputStyle.Paragraph)
-                            .setRequired(true)
-                    );
-                });
-                modal.addComponents(row);
-            }
+            const row = new ActionRowBuilder();
+            part.forEach((question, index) => {
+                row.addComponents(
+                    new TextInputBuilder()
+                        .setCustomId(`q${index}`)
+                        .setLabel(question)
+                        .setStyle(TextInputStyle.Paragraph)
+                        .setRequired(true)
+                );
+            });
 
+            modal.addComponents(row);
             await interaction.showModal(modal);
         }
     }
 
     if (interaction.isModalSubmit()) {
-        if (interaction.customId === 'staff_application_modal') {
-            const answers = [];
-            for (let i = 0; i < QUESTIONS.length; i++) {
-                answers.push(interaction.fields.getTextInputValue(`q${i}`));
-            }
+        if (interaction.customId.startsWith('part1') || interaction.customId.startsWith('part2') || interaction.customId.startsWith('part3')) {
+            const part = interaction.customId === 'part1_modal' ? QUESTIONS.slice(0, 5) :
+                        interaction.customId === 'part2_modal' ? QUESTIONS.slice(5, 10) :
+                        QUESTIONS.slice(10);
 
-            // Verificación de que las respuestas están correctamente definidas
-            if (!answers || answers.length !== QUESTIONS.length) {
-                console.error("Las respuestas no están bien definidas o están incompletas.");
-                return;
-            }
+            const answers = [];
+            part.forEach((_, index) => {
+                answers.push(interaction.fields.getTextInputValue(`q${index}`));
+            });
 
             const embed = new EmbedBuilder()
                 .setTitle('Nueva Aplicación para Staff')
@@ -105,7 +132,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 .setColor('Blue')
                 .setFooter({ text: 'CubeRaze Network ©' });
 
-            QUESTIONS.forEach((q, i) => {
+            part.forEach((q, i) => {
                 embed.addFields({ name: q, value: answers[i], inline: false });
             });
 
