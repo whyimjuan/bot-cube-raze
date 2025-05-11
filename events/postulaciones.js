@@ -99,19 +99,23 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 .setCustomId(`${interaction.customId}_modal`)
                 .setTitle(`Formulario de Postulación - ${interaction.customId === 'part1' ? 'Parte 1' : interaction.customId === 'part2' ? 'Parte 2' : 'Parte 3'}`);
 
-            const row = new ActionRowBuilder();
-            part.forEach((question, index) => {
-                row.addComponents(
-                    new TextInputBuilder()
-                        .setCustomId(`q${index}`)
-                        .setLabel(question)
-                        .setStyle(TextInputStyle.Paragraph)
-                        .setRequired(true)
-                );
-            });
+const modal = new ModalBuilder()
+    .setCustomId(`${interaction.customId}_modal`)
+    .setTitle(`Formulario de Postulación - ${interaction.customId === 'part1' ? 'Parte 1' : interaction.customId === 'part2' ? 'Parte 2' : 'Parte 3'}`);
 
-            modal.addComponents(row);
-            await interaction.showModal(modal);
+const components = part.map((question, index) =>
+    new ActionRowBuilder().addComponents(
+        new TextInputBuilder()
+            .setCustomId(`q${index}`)
+            .setLabel(question)
+            .setStyle(TextInputStyle.Paragraph)
+            .setRequired(true)
+    )
+);
+
+modal.addComponents(...components);
+await interaction.showModal(modal);
+
         }
     }
 
