@@ -29,7 +29,7 @@ const QUESTIONS = [
     'Nombre de Discord',
     'Cuántos años tienes',
     '¿Tienes experiencia en ser staff?',
-    '¿En qué servidor has sido staff? (si no fuiste en ninguno pon "no", si sí, di cuál y por qué dejaste)',
+    '¿En qué servidor has sido staff?',
     'Dime 5 tipos de hacks',
     'Dime la diferencia entre SPAM y FLOOD',
     '¿Sabes hacer SS? Si es así, dime cómo empieza y cómo acaba',
