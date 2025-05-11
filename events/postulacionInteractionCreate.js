@@ -70,10 +70,15 @@ module.exports = {
     // 3) Recibir respuestas de modal
     if (interaction.isModalSubmit() && interaction.customId.startsWith('modal_part_')) {
       const part = interaction.customId.split('_').pop();
-      const app = applications.get(interaction.user.id);
-      interaction.fields.fields.forEach((fld, key) => {
-        app.responses[key] = fld.value;
-      });
+  const app = applications.get(interaction.user.id);
+  if (!app) {
+    return interaction.reply({ content: 'No se encontró tu solicitud. Por favor, vuelve a intentarlo.', ephemeral: true });
+  }
+
+  interaction.fields.fields.forEach((fld, key) => {
+    app.responses[key] = fld.value;
+  });
+
       app.partsDone.add(part);
       await interaction.reply({ content: `Parte ${part} completada.`, ephemeral: true });
 
